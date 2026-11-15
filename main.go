@@ -128,7 +128,7 @@ func run(ctx context.Context, argv []string, stdout, stderr io.Writer) int {
 		return 1
 	}
 
-	all, err := getProducts(*arch)
+	all, err := getProductsFor(*arch, requested)
 	if err != nil {
 		logError(stderr, err)
 		return 1

@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"unicode"
 )
 
 // Base URLs, overridable in tests via httptest servers.
@@ -114,6 +115,19 @@ var getOpenSUSEProducts = sync.OnceValues(fetchOpenSUSEProducts)
 // getProducts returns the sorted list of products susepkg queries by
 // default.
 func getProducts(arch string) ([]product, error) {
+	suse, err := getSUSEProductList(arch)
+	if err != nil {
+		return nil, err
+	}
+	opensuse, err := getOpenSUSEProductList(arch)
+	if err != nil {
+		return nil, err
+	}
+	return append(suse, opensuse...), nil
+}
+
+// getSUSEProductList returns the sorted SUSE products (from SCC).
+func getSUSEProductList(arch string) ([]product, error) {
 	suseEntries, err := getSUSEProducts()
 	if err != nil {
 		return nil, err
@@ -137,6 +151,11 @@ func getProducts(arch string) ([]product, error) {
 		return productSortLess(products[i], products[j])
 	})
 
+	return products, nil
+}
+
+// getOpenSUSEProductList returns the sorted openSUSE products.
+func getOpenSUSEProductList(arch string) ([]product, error) {
 	osEntries, err := getOpenSUSEProducts()
 	if err != nil {
 		return nil, err
@@ -153,7 +172,7 @@ func getProducts(arch string) ([]product, error) {
 		return strings.Compare(a.name, b.name)
 	})
 
-	return append(products, osProducts...), nil
+	return osProducts, nil
 }
 
 func hasAnyPrefix(s string, prefixes []string) bool {
@@ -194,4 +213,51 @@ func productSortLess(a, b product) bool {
 func atoi(s string) int {
 	n, _ := strconv.Atoi(s)
 	return n
+}
+
+// getProductsFor returns the products needed to resolve the requested names
+// (nil means all). The SCC list is only fetched when some request isn't
+// satisfied by an openSUSE product, or could also name a SUSE product
+// (requests without letters, such as "15.6").
+func getProductsFor(arch string, requested []string) ([]product, error) {
+	if len(requested) == 0 {
+		return getProducts(arch)
+	}
+	if slices.ContainsFunc(requested, isSUSERequest) &&
+		!slices.ContainsFunc(requested, func(r string) bool { return !isSUSERequest(r) }) {
+		return getSUSEProductList(arch)
+	}
+	opensuse, err := getOpenSUSEProductList(arch)
+	if err != nil {
+		return nil, err
+	}
+	needSUSE := false
+	for _, r := range requested {
+		hasLetter := strings.IndexFunc(r, unicode.IsLetter) >= 0
+		if !hasLetter {
+			needSUSE = true
+			break
+		}
+		if _, err := selectProducts(opensuse, []string{r}); err != nil {
+			needSUSE = true
+			break
+		}
+	}
+	if !needSUSE {
+		return opensuse, nil
+	}
+	suse, err := getSUSEProductList(arch)
+	if err != nil {
+		return nil, err
+	}
+	return append(suse, opensuse...), nil
+}
+
+// isSUSERequest reports whether the request starts with a known SUSE product
+// family (e.g. "SLES/15.6", "sle-micro"), so it can't name an openSUSE product.
+func isSUSERequest(r string) bool {
+	r = strings.ToLower(r)
+	return slices.ContainsFunc(productPrefixes, func(p string) bool {
+		return strings.HasPrefix(r, strings.ToLower(strings.TrimSuffix(p, "/")))
+	})
 }
