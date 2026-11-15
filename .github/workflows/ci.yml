@@ -18,7 +18,7 @@ jobs:
           go-version-file: go.mod
       - uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.13.1
+          version: v2.14.0
           install-only: true
       - run: make fmt-check vet lint tidy-check
 
