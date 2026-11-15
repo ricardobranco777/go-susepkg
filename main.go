@@ -50,17 +50,16 @@ func run(ctx context.Context, argv []string, stdout, stderr io.Writer) int {
 	arch := fs.StringP("arch", "a", defaultArch(), "architecture: "+strings.Join(validArchs, ", "))
 	insensitive := fs.BoolP("insensitive", "i", false, "case insensitive search")
 	prods := fs.StringArrayP("product", "p", nil, "product or 'list' or 'any'. May be specified multiple times")
-	isRegex := fs.BoolP("regex", "x", false, "search regular expression")
 	showVersion := fs.Bool("version", false, "show program's version number and exit")
 	help := fs.BoolP("help", "h", false, "show this help message and exit")
 
 	usage := func(w io.Writer) {
-		fmt.Fprintln(w, "usage: susepkg [-h] [-a ARCH] [-i] -p PRODUCT [-x] [--version] [package]")
+		fmt.Fprintln(w, "usage: susepkg [-h] [-a ARCH] [-i] -p PRODUCT [--version] [package]")
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, "show SUSE package versions")
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, "positional arguments:")
-		fmt.Fprintln(w, "  package  may be a shell pattern or regular expression")
+		fmt.Fprintln(w, "  package  may be a shell pattern")
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, "options:")
 		fmt.Fprint(w, fs.FlagUsages())
@@ -117,7 +116,7 @@ func run(ctx context.Context, argv []string, stdout, stderr io.Writer) int {
 	if len(requested) == 1 && requested[0] == "any" {
 		requested = nil
 	}
-	re, err := getRegex(pattern, *insensitive, *isRegex)
+	re, err := getRegex(pattern, *insensitive)
 	if err != nil {
 		fmt.Fprintf(stderr, "susepkg: invalid pattern %q: %v\n", pattern, err)
 		return 1

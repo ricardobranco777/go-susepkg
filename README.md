@@ -20,19 +20,18 @@ make install   # installs to ~/bin
 ## Usage
 
 ```
-usage: susepkg [-h] [-a ARCH] [-i] -p PRODUCT [-x] [--version] [package]
+usage: susepkg [-h] [-a ARCH] [-i] -p PRODUCT [--version] [package]
 
 show SUSE package versions
 
 positional arguments:
-  package  may be a shell pattern or regular expression
+  package  may be a shell pattern
 
 options:
   -a, --arch string           architecture: aarch64, ppc64le, s390x, x86_64
   -h, --help                  show this help message and exit
   -i, --insensitive           case insensitive search
   -p, --product stringArray   product or 'list' or 'any'. May be specified multiple times
-  -x, --regex                 search regular expression
       --version               show program's version number and exit
 ```
 
@@ -45,7 +44,7 @@ Set `DEBUG=1` to dump HTTP requests and responses to stderr.
 - `susepkg -p Micro podman`
 - `susepkg -p SLES podman`
 - `susepkg -p SL-Micro/6.0 \*podman\*`
-- `susepkg -p SL-Micro/6.0 -x podman-.*`
+- `susepkg -p SL-Micro/6.0 podman-\*`
 
 ## Differences from the Python version
 

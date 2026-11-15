@@ -5,7 +5,7 @@ package main
 import "testing"
 
 func TestGetRegexPlain(t *testing.T) {
-	re, err := getRegex("podman", false, false)
+	re, err := getRegex("podman", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,7 +25,7 @@ func TestGetRegexPlain(t *testing.T) {
 }
 
 func TestGetRegexInsensitive(t *testing.T) {
-	re, err := getRegex("podman", true, false)
+	re, err := getRegex("podman", true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,7 +35,7 @@ func TestGetRegexInsensitive(t *testing.T) {
 }
 
 func TestGetRegexRegex(t *testing.T) {
-	re, err := getRegex("podman-.*", false, true)
+	re, err := getRegex("podman-*", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func TestGetRegexGlob(t *testing.T) {
 		{"podman*", "xpodman", false}, // start anchor still applies
 	}
 	for _, c := range cases {
-		re, err := getRegex(c.pattern, false, false)
+		re, err := getRegex(c.pattern, false)
 		if err != nil {
 			t.Fatalf("getRegex(%q): %v", c.pattern, err)
 		}

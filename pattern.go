@@ -11,13 +11,11 @@ import (
 // getRegex compiles a package name or pattern into an anchored regular
 // expression. Go's regexp.MatchString searches anywhere in the string, so
 // every branch is explicitly anchored at the start with "^".
-func getRegex(pkg string, insensitive, isRegex bool) (*regexp.Regexp, error) {
+func getRegex(pkg string, insensitive bool) (*regexp.Regexp, error) {
 	var body string
 	fullMatch := false
 
 	switch {
-	case isRegex:
-		body = pkg
 	case strings.ContainsAny(pkg, "[?*"):
 		body = globToRegexBody(pkg)
 		fullMatch = true

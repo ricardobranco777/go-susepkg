@@ -117,7 +117,7 @@ func TestRunErrors(t *testing.T) {
 		{[]string{"podman"}, 2},                       // -p is required
 		{[]string{"-p", "any"}, 1},                    // no package
 		{[]string{"-p", "any", "-a", "mips", "x"}, 2}, // bad arch
-		{[]string{"-p", "any", "-x", "(", "x"}, 1},    // bad regex
+		{[]string{"-p", "any", "(", "x"}, 1},          // bad regex
 		{[]string{"-p", "any", "***"}, 1},             // no usable name
 		{[]string{"--bogus"}, 2},
 	}

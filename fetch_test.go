@@ -104,7 +104,7 @@ func TestFetchVersionSCC(t *testing.T) {
 	sccPackagesURL = srv.URL
 	defer func() { sccPackagesURL = restore }()
 
-	re, err := getRegex("podman", false, false)
+	re, err := getRegex("podman", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,7 +148,7 @@ func TestFetchVersionOpenSUSE(t *testing.T) {
 	mirrorcacheURL = srv.URL
 	defer func() { mirrorcacheURL = restore }()
 
-	re, err := getRegex("podman", false, false)
+	re, err := getRegex("podman", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -183,7 +183,7 @@ func TestFetchVersionOpenSUSEWithVersion(t *testing.T) {
 	mirrorcacheURL = srv.URL
 	defer func() { mirrorcacheURL = restore }()
 
-	re, err := getRegex("podman", false, false)
+	re, err := getRegex("podman", false)
 	if err != nil {
 		t.Fatal(err)
 	}
