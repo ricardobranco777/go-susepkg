@@ -37,6 +37,7 @@ var eolProducts = map[string]bool{
 	"SLES/15.1":        true,
 	"SLES/15.2":        true,
 	"SLES/15.3":        true,
+	"SLE-Micro/5.3":    true,
 	"SUSE-MicroOS/5.0": true,
 	"SUSE-MicroOS/5.1": true,
 	"SUSE-MicroOS/5.2": true,
